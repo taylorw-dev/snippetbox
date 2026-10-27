@@ -23,7 +23,7 @@ type templateData struct {
 func newTemplateCache() (map[string]*template.Template, error) {
 	cache := map[string]*template.Template{}
 
-	pages, err := fs.Glob(assets.Files, "./assets/html/pages/*.tmpl")
+	pages, err := fs.Glob(assets.Files, "html/pages/*.tmpl")
 	if err != nil {
 		return nil, err
 	}
