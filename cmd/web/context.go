@@ -6,7 +6,7 @@ const (
 	isAuthenticatedContextKey     = contextKey("isAuthenticated")
 	authenticatedUserIDContextKey = contextKey("authenticatedUserID")
 	flashContextKey               = contextKey("flash")
-	redirectURIContextKey         = contextKey("redirectURI")
+	redirectPathContextKey        = contextKey("redirectPath")
 )
 
 // Implement fmt.Stringer
