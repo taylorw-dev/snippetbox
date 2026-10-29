@@ -285,3 +285,29 @@ func (app *application) about(w http.ResponseWriter, r *http.Request) {
 		app.serverError(w, r, err)
 	}
 }
+
+func (app *application) accountView(w http.ResponseWriter, r *http.Request) {
+	id := app.sessionManager.GetInt(r.Context(), "authenticatedUserID")
+	if id < 0 {
+		app.clientError(w, http.StatusUnprocessableEntity)
+	}
+
+	user, err := app.users.Get(id)
+	if err != nil {
+		switch {
+		case errors.Is(err, models.ErrNoRecord):
+			http.NotFound(w, r)
+		default:
+			app.serverError(w, r, err)
+		}
+		return
+	}
+
+	data := app.newTemplateData(r)
+	data.User = user
+
+	err = app.render(w, r, http.StatusOK, "account.tmpl", data)
+	if err != nil {
+		app.serverError(w, r, err)
+	}
+}
