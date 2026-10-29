@@ -13,9 +13,6 @@ import (
 const (
 	passwordMinChars = 8
 	passwordMaxBytes = 72
-
-	authenticatedUserIDKey = "authenticatedUserID"
-	flashKey               = "flash"
 )
 
 type snippetCreateForm struct {
@@ -128,7 +125,7 @@ func (app *application) snippetCreatePost(w http.ResponseWriter, r *http.Request
 		return
 	}
 
-	app.sessionManager.Put(r.Context(), flashKey, "Snippet successfully created!")
+	app.sessionManager.Put(r.Context(), flashContextKey.String(), "Snippet successfully created!")
 
 	http.Redirect(w, r, fmt.Sprintf("/snippet/view/%d", id), http.StatusSeeOther)
 }
@@ -195,7 +192,7 @@ func (app *application) userSignupPost(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	app.sessionManager.Put(r.Context(), flashKey, "Your signup was successful. Please log in.")
+	app.sessionManager.Put(r.Context(), flashContextKey.String(), "Your signup was successful. Please log in.")
 	http.Redirect(w, r, "/user/login", http.StatusSeeOther)
 }
 
@@ -261,7 +258,7 @@ func (app *application) userLoginPost(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	app.sessionManager.Put(r.Context(), authenticatedUserIDKey, id)
+	app.sessionManager.Put(r.Context(), authenticatedUserIDContextKey.String(), id)
 
 	http.Redirect(w, r, "/snippet/create", http.StatusSeeOther)
 }
@@ -273,8 +270,8 @@ func (app *application) userLogoutPost(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	app.sessionManager.Remove(r.Context(), authenticatedUserIDKey)
-	app.sessionManager.Put(r.Context(), flashKey, "You've been logged out successfully!")
+	app.sessionManager.Remove(r.Context(), authenticatedUserIDContextKey.String())
+	app.sessionManager.Put(r.Context(), flashContextKey.String(), "You've been logged out successfully!")
 
 	http.Redirect(w, r, "/", http.StatusSeeOther)
 }
@@ -287,7 +284,7 @@ func (app *application) about(w http.ResponseWriter, r *http.Request) {
 }
 
 func (app *application) accountView(w http.ResponseWriter, r *http.Request) {
-	id := app.sessionManager.GetInt(r.Context(), "authenticatedUserID")
+	id := app.sessionManager.GetInt(r.Context(), authenticatedUserIDContextKey.String())
 	if id < 0 {
 		app.clientError(w, http.StatusUnprocessableEntity)
 	}
