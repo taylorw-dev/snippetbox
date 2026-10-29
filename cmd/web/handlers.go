@@ -278,3 +278,10 @@ func (app *application) userLogoutPost(w http.ResponseWriter, r *http.Request) {
 
 	http.Redirect(w, r, "/", http.StatusSeeOther)
 }
+
+func (app *application) about(w http.ResponseWriter, r *http.Request) {
+	err := app.render(w, r, http.StatusOK, "about.tmpl", app.newTemplateData(r))
+	if err != nil {
+		app.serverError(w, r, err)
+	}
+}
